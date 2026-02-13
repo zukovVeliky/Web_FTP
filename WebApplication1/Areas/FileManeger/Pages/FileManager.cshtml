@@ -1,0 +1,161 @@
+﻿@page
+@model FileManager.Pages.FileManagerModel
+@{
+    Layout = "_Layout";
+}
+@Html.AntiForgeryToken()
+<div id="FMC">
+
+    <div id="managerFileKolekce" class="manager container">
+        <div id="fmcHead" class="">
+            <div class="row">
+                <div class="col-10"><span id="rootVisit">root ://  @Model.VievRoot.Replace("\\", " / ")</span></div>
+                <div class="col-2">
+                    <!--  uzivatelska tlacitka -->
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            @{
+                if (Model.LocalRoot != "")
+                {
+                    @await Html.PartialAsync("~/Areas/FileManeger/Pages/Soubor.cshtml", new FileManager.Models.ItemFM(
+         //@System.IO.Path.Combine(@Model.LocalDirectory, @System.IO.Path.GetFileName(arg)),
+         @Model.URLDirectory + "/",
+         //arg.Replace(@System.IO.Path.Combine(@Model.LocalDirectory, @System.IO.Path.GetFileName(arg)), ""),
+         true))
+                }
+            }
+
+            @{ foreach (var arg in Model.Directories)
+                {
+                    <div>
+                        @await Html.PartialAsync("~/Areas/FileManeger/Pages/Soubor.cshtml", new FileManager.Models.ItemFM(
+         @System.IO.Path.Combine(@Model.LocalDirectory, @System.IO.Path.GetFileName(arg)),
+         @Model.URLDirectory + "/",
+         arg.Replace(@System.IO.Path.Combine(@Model.LocalDirectory, @System.IO.Path.GetFileName(arg)), ""), true))
+                    </div>
+                }
+
+            }
+
+
+            @{ foreach (var arg in Model.Files)
+                { // @System.IO.Path.GetFileName(arg)      <br />
+                    <div>
+                        @await Html.PartialAsync("~/Areas/FileManeger/Pages/Soubor.cshtml", new FileManager.Models.ItemFM(
+     @System.IO.Path.Combine(@Model.LocalDirectory, @System.IO.Path.GetFileName(arg)),
+     @Model.URLDirectory + "/",
+     arg.Replace(@System.IO.Path.Combine(@Model.LocalDirectory, @System.IO.Path.GetFileName(arg)), "")))
+                    </div>
+                }
+                <input type="hidden" id="uploadRoot" name="uploadRoot" value="@Model.UploadRoot" />
+                <input type="hidden" id="root" name="root" value="@Model.LocalRoot" />
+                <input type="hidden" id="settings" name="settings" value="@Model.SestavSestaveni()" />
+            }
+        </div>
+    </div>
+
+</div>
+
+
+
+<br />
+
+<div id="dialogLoad" title="Nahrát soubory">
+    <div class="form-row">
+        <div class="col">
+
+            <form asp-antiforgery="false" enctype="multipart/form-data" method="post">
+                <div id="dZUpload" class="dropzone">
+                </div>
+                
+                <script src="~/lib/upload-file/UploadPhoto2.js"></script>
+                <link href="~/lib/upload-file/UploadPhoto2.css" rel="stylesheet" />
+                <!--<script src="~/lib/filemanager/js/uploadphoto2.js"></script>
+                <link href="~/lib/filemanager/js/css/uploadphoto2.css" rel="stylesheet" />-->
+                <script type="text/javascript">
+                    Dropzone.autoDiscover = false;
+                    myDropzone = new Dropzone("div#dZUpload", { url: document.location.origin,
+                                        headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() }
+                    });
+                </script>               
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="dialogNahled" title="Náhled">
+    <div class="form-row">
+        <div class="col" id="imgNahled">
+            @{
+                if (Model.NahledIMG != null)
+                {
+                    <img id="myNahled" style="width:300px;" src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.NahledIMG))" />
+                }
+            }
+        </div>
+    </div>
+</div>
+
+
+<div id="dialogRename" title="Přejmenovat">
+    <div class="form-row">
+        <div class="col">
+            <input id="renameInput" arg="F" type="text" placeholder="" />
+        </div>
+        <div class="col">
+            <span id="typSouboru"></span>
+        </div>
+    </div>
+</div>
+<div id="dialogOdkaz" title="Odkaz na soubor">
+    <div class="form-row">
+        <div class="col">
+            <p id="Podkaz"></p>
+        </div>
+    </div>
+</div>
+<div id="dialogDelete" title="Odstranit">
+    <div class="form-row">
+        <div class="col">
+            Opravdu si přejete odstranit vybrané položky ?
+        </div>
+    </div>
+</div>
+
+<div id="dialogCreateDirectory" title="Vytvořit adresář">
+    <div class="form-row">
+        <div class="col">
+            <input id="directoryName" type="text" placeholder="" />
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        setPath = '@Model.BasicDirectory.Replace("\\", "/")';
+        pageFunction = '@Model.PageFunction';
+
+        DialogNahled();
+        DialogRename();
+        DialogOdkaz();
+        DialogDelete();
+        DialogCreate();
+        DialogLoad();
+
+
+
+        StartManager();
+        InitMenu();
+
+
+
+        });
+
+</script>
+
+

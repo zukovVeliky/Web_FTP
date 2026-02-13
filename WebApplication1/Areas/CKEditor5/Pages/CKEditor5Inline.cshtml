@@ -1,0 +1,42 @@
+@model CKEditor5.CKEditor5InlineModel
+@{
+}
+<script src="~/lib/CKEditor5/ckeditorInline.js"></script>
+@Html.AntiForgeryToken()   
+<script>
+    SetPath = '@Model.SetPath';
+    var CKEditor = null;
+    var allElements = document.querySelectorAll('[edit]');
+    var IE = [InlineEditor,InlineEditor,InlineEditor]
+    for (var i = 0, n = allElements.length; i < n; i++) {    
+        const edit = allElements[i].getAttribute("edit");
+        InlineEditor
+            .create(allElements[i], {
+                autosave: {
+                    save(editor) {                      
+                        return ajax(editor.getData(),edit);
+                    }
+                }
+            })
+            .then(editor => {
+                CKEditor = editor;
+
+            })
+            .catch(err => {
+                console.error(err.stack);
+            });
+    }
+
+    function ajax(Data, Edit) {
+        var json = { html: Data, Id: Edit };
+        var xhttp = new XMLHttpRequest();
+        var url = window.location.pathname + "?handler=Content";
+        xhttp.open("post", url, true);
+        xhttp.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+        xhttp.send(JSON.stringify(json));
+    }
+
+    function ZachyceniURLCKeditor(ZachyceneURL) {
+        CKEditor.execute('insertImage', { source: ZachyceneURL });
+    }
+</script>

@@ -1,0 +1,12 @@
+﻿@model Avatar.ZobrazeniAvataraModel
+@{
+}
+
+<div style="width: @Model.WidthPX;height:@Model.PixelValue(Model.Height);">
+
+
+    <div style=" @Model.StyleCircle overflow:hidden; width: @Model.WidthPX;height:@Model.PixelValue(Model.Height);">
+        <img src="@Model.ImgURL" style="position:relative; user-select:none;pointer-events:none;
+transform: scale(@Model.Transform); left: @Model.LeftPX ; top: @Model.TopPX;" alt="GSK Usti" />
+    </div>
+</div>

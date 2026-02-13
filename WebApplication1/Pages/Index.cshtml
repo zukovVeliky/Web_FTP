@@ -1,0 +1,33 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="mb-4">
+    <h1 class="display-4">Welcome</h1>
+    <p>Textovy a souborovy manager demo.</p>
+    <div class="mt-3">
+        <button class="btn btn-primary" onclick="window.location.href='/FileManager'">Otevřít File Manager</button>
+    </div>
+</div>
+
+<form method="post" asp-page-handler="EditText">
+    @await Html.PartialAsync("~/Areas/CKEditor5/Pages/CKEditor5.cshtml", Model.EditorMain)
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Ulozit text</button>
+    </div>
+</form>
+
+<hr />
+
+<div class="mt-4">
+    <h3>Dalsi CKEditor instance (test vice komponent)</h3>
+    <div class="mb-4">
+        @await Html.PartialAsync("~/Areas/CKEditor5/Pages/CKEditor5.cshtml", Model.EditorSecondary1)
+    </div>
+    <div class="mb-4">
+        @await Html.PartialAsync("~/Areas/CKEditor5/Pages/CKEditor5.cshtml", Model.EditorSecondary2)
+    </div>
+</div>
+

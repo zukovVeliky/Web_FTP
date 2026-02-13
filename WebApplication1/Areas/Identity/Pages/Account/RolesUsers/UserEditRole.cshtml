@@ -1,0 +1,76 @@
+﻿@page
+@model Identity.Pages.Account.RolesUsers.UserEditRoleModel
+@{
+    ViewData["Title"] = "Editace rolí uživatele";
+    if (User.IsInRole("Administrator"))
+    {
+
+    }
+    else
+    {
+        Response.Redirect(Request.Scheme + "://" + Request.Host);
+    }
+}
+
+<style>
+    a.disabled {
+        /* Make the disabled links grayish*/
+        color: gray;
+        /* And disable the pointer events */
+        pointer-events: none;
+    }
+</style>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <h2>@Model.Uzivatel.Email</h2>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Název uživatelské role
+                        </th>
+                        
+                        <th> </th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Roles)
+                    {
+                        
+                        string CA = ""; string CD = "";
+                        if (Model.UserInRole(item.Id)) { 
+                            CA = "disabled"; 
+                        } else { 
+                            CD = "disabled"; 
+                        }
+                        <tr>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+
+                                <a asp-page="./UserEditRole" asp-page-handler="A" asp-route-id="@Model.Zakodovani(item.Id)" asp-route-cip="@Model.CIP" class="@CA">Přidat</a> |
+                                <a asp-page = "./UserEditRole" asp-page-handler="D" asp-route-id = "@Model.Zakodovani(item.Id)" asp-route-cip="@Model.CIP" class="@CD" >Odebrat</a>
+                                
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

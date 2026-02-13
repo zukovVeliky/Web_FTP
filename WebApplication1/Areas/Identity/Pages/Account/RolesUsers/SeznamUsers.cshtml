@@ -1,0 +1,53 @@
+﻿@page
+@model Identity.Pages.Account.RolesUsers.SeznamUsersModel
+@{
+    ViewData["Title"] = "Uživatelé";
+    if (User.IsInRole("Administrator"))
+    {
+
+    }
+    else
+    {
+        Response.Redirect(Request.Scheme + "://" + Request.Host);
+    }
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Jméno/Email uživatele
+                        </th>
+
+                        <th> </th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Uzivatele)
+                    {
+                        <tr>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+
+                                <a asp-page="./UserEditRole" asp-route-cip="@Model.CodeIdUser(item.Id)">Editovat Role</a> |
+                                <a href="#" onclick="DialogDelSET(@item.Id, '@item.Email');" data-toggle="modal" data-target="#exampleModalCenter">Odstranit</a>
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

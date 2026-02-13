@@ -1,0 +1,316 @@
+@model FTP.FTP_UpdateModel
+@{
+}
+@Html.AntiForgeryToken()
+<div class="modal fade" id="ftpDeployModal" tabindex="-1" aria-labelledby="ftpDeployModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ftpDeployModalLabel">FTP nasazení</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavøít"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <h6>FTP pøipojení</h6>
+                        <div class="mb-2">
+                            <label class="form-label">Host</label>
+                            <input class="form-control form-control-sm" id="ftpHost" placeholder="ftp.example.com" value="@Model.DefaultFtpHost" />
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label">Port</label>
+                                <input class="form-control form-control-sm" id="ftpPort" type="number" value="@Model.DefaultFtpPort" />
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Remote root</label>
+                                <input class="form-control form-control-sm" id="ftpRemoteRoot" placeholder="/" value="@Model.DefaultFtpRemoteRoot" />
+                            </div>
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Uživatel</label>
+                                <input class="form-control form-control-sm" id="ftpUser" autocomplete="username" value="@Model.DefaultFtpUsername" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Heslo</label>
+                                <input class="form-control form-control-sm" id="ftpPass" type="password" autocomplete="current-password" value="@Model.DefaultFtpPassword" />
+                            </div>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="ftpUseSsl" @(Model.DefaultFtpUseSsl ? "checked" : "") />
+                            <label class="form-check-label" for="ftpUseSsl">Použít SSL (FTPS)</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h6>Lokální release</h6>
+                        <div class="mb-2">
+                            <label class="form-label">Cesta k release složce</label>
+                            <input class="form-control form-control-sm" id="localReleasePath" placeholder="D:\Projects\Blog\Blog.Web\bin\Release\net8.0\win-x64" value="@Model.DefaultReleasePath" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Název projektu</label>
+                            <input class="form-control form-control-sm"
+                                   id="projectName"
+                                   value="@Model.DefaultProjectName" />
+
+                        </div>
+                        <button class="btn btn-outline-primary mt-2" type="button" id="ftpDeployBtn">Zastavit server a nahrát DLL/PDB/EXE</button>
+                        <div class="form-text mt-2">Nahraje `app_offline.htm`, provede upload a potom soubor odstraní.</div>
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" id="ftpFullIncludeWwwroot" checked />
+                            <label class="form-check-label" for="ftpFullIncludeWwwroot">Nahrát wwwroot</label>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="ftpFullOverwrite" checked />
+                            <label class="form-check-label" for="ftpFullOverwrite">Pøepsat existující soubory</label>
+                        </div>
+                        <button class="btn btn-outline-primary mt-2" type="button" id="ftpFullUploadBtn">Nahrát kompletní web</button>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <h6>Správa bìhu webu</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-outline-warning" type="button" id="ftpStopBtn">Zastavit web</button>
+                            <button class="btn btn-outline-success" type="button" id="ftpStartBtn">Spustit web</button>
+                        </div>
+                        <div class="form-text mt-2">Zastavení/spuštìní vytvoøí nebo odstraní `app_offline.htm`.</div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h6>Kompletní smazání webu</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="ftpKeepWwwroot" />
+                            <label class="form-check-label" for="ftpKeepWwwroot">Ponechat wwwroot</label>
+                        </div>
+                        <button class="btn btn-outline-danger mt-2" type="button" id="ftpDeleteWebBtn">Smazat web</button>
+                    </div>
+                </div>
+                <hr class="my-3" />
+
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h6 class="mb-2">appsettings.json</h6>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary" type="button" data-config-file="appsettings.json" data-action="load">Naèíst</button>
+                                <button class="btn btn-outline-secondary" type="button" data-config-file="appsettings.json" data-action="save">Uložit</button>
+                            </div>
+                        </div>
+                        <textarea class="form-control form-control-sm" id="configAppSettings" rows="12" spellcheck="false"></textarea>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h6 class="mb-2">web.config</h6>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary" type="button" data-config-file="web.config" data-action="load">Naèíst</button>
+                                <button class="btn btn-outline-secondary" type="button" data-config-file="web.config" data-action="save">Uložit</button>
+                            </div>
+                        </div>
+                        <textarea class="form-control form-control-sm" id="configWebConfig" rows="12" spellcheck="false"></textarea>
+                    </div>
+                </div>
+
+                <div class="alert alert-secondary mt-3 d-none" id="ftpStatus"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Zavøít</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ftpStatus = document.getElementById('ftpStatus');
+
+    function setFtpStatus(message, isError = false) {
+        if (!ftpStatus) return;
+        ftpStatus.classList.remove('d-none', 'alert-danger', 'alert-secondary');
+        ftpStatus.classList.add(isError ? 'alert-danger' : 'alert-secondary');
+        ftpStatus.textContent = message;
+    }
+
+    function getFtpPayload() {
+        return {
+            Host: document.getElementById('ftpHost')?.value || '',
+            Port: Number(document.getElementById('ftpPort')?.value || 21),
+            Username: document.getElementById('ftpUser')?.value || '',
+            Password: document.getElementById('ftpPass')?.value || '',
+            RemoteRoot: document.getElementById('ftpRemoteRoot')?.value || '/',
+            UseSsl: document.getElementById('ftpUseSsl')?.checked || false,
+            LocalReleasePath: document.getElementById('localReleasePath')?.value || '',
+            ProjectName: document.getElementById('projectName')?.value || ''
+        };
+    }
+
+    function getRequestVerificationToken() {
+        return document.querySelector('#ftpDeployModal input[name="__RequestVerificationToken"]')?.value || '';
+    }
+    function toFormData(payload) {
+        const form = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            form.append(key, value);
+        });
+        const token = getRequestVerificationToken();
+        if (token) {
+            form.append('__RequestVerificationToken', token);
+        }
+        return form;
+    }
+    document.getElementById('ftpDeployBtn')?.addEventListener('click', async () => {
+        setFtpStatus('Nasazení probíhá...');
+        const payload = getFtpPayload();
+
+        try {
+            const response = await fetch('?handler=FtpDeploy', {
+                method: 'POST',
+                body: toFormData(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                setFtpStatus(result.message || 'FTP nasazení selhalo.', true);
+                return;
+            }
+            setFtpStatus(result.message || 'Nasazení dokonèeno.');
+        } catch (error) {
+            setFtpStatus(`FTP nasazení selhalo: ${error.message}`, true);
+        }
+    });
+
+    document.getElementById('ftpStopBtn')?.addEventListener('click', async () => {
+        if (!confirm('Opravdu chcete zastavit web?')) return;
+        setFtpStatus('Zastavuji web...');
+        const payload = getFtpPayload();
+        payload.EnableOffline = true;
+        try {
+            const response = await fetch('?handler=FtpToggleOffline', {
+                method: 'POST',
+                body: toFormData(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                setFtpStatus(result.message || 'Zastavení webu selhalo.', true);
+                return;
+            }
+            setFtpStatus(result.message || 'Web byl zastaven.');
+        } catch (error) {
+            setFtpStatus(`Zastavení webu selhalo: ${error.message}`, true);
+        }
+    });
+
+    document.getElementById('ftpStartBtn')?.addEventListener('click', async () => {
+        if (!confirm('Opravdu chcete spustit web?')) return;
+        setFtpStatus('Spouštím web...');
+        const payload = getFtpPayload();
+        payload.EnableOffline = false;
+        try {
+            const response = await fetch('?handler=FtpToggleOffline', {
+                method: 'POST',
+                body: toFormData(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                setFtpStatus(result.message || 'Spuštìní webu selhalo.', true);
+                return;
+            }
+            setFtpStatus(result.message || 'Web byl spuštìn.');
+        } catch (error) {
+            setFtpStatus(`Spuštìní webu selhalo: ${error.message}`, true);
+        }
+    });
+
+    document.getElementById('ftpDeleteWebBtn')?.addEventListener('click', async () => {
+        const keepWwwroot = document.getElementById('ftpKeepWwwroot')?.checked;
+        const confirmMsg = keepWwwroot
+            ? 'Opravdu chcete smazat web (wwwroot zùstane)?'
+            : 'Opravdu chcete smazat celý web vèetnì wwwroot?';
+        if (!confirm(confirmMsg)) return;
+        setFtpStatus('Mažu web...');
+        const payload = getFtpPayload();
+        payload.KeepWwwroot = keepWwwroot ? 'true' : 'false';
+        try {
+            const response = await fetch('?handler=FtpDeleteWeb', {
+                method: 'POST',
+                body: toFormData(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                setFtpStatus(result.message || 'Mazání webu selhalo.', true);
+                return;
+            }
+            setFtpStatus(result.message || 'Web byl smazán.');
+        } catch (error) {
+            setFtpStatus(`Mazání webu selhalo: ${error.message}`, true);
+        }
+    });
+
+    document.getElementById('ftpFullUploadBtn')?.addEventListener('click', async () => {
+        if (!confirm('Opravdu chcete nahrát kompletní web z release?')) return;
+        setFtpStatus('Nahrávám kompletní web...');
+        const payload = getFtpPayload();
+        payload.IncludeWwwroot = document.getElementById('ftpFullIncludeWwwroot')?.checked ? 'true' : 'false';
+        payload.OverwriteExisting = document.getElementById('ftpFullOverwrite')?.checked ? 'true' : 'false';
+        try {
+            const response = await fetch('?handler=FtpUploadFull', {
+                method: 'POST',
+                body: toFormData(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                setFtpStatus(result.message || 'Upload webu selhal.', true);
+                return;
+            }
+            setFtpStatus(result.message || 'Upload webu dokonèen.');
+        } catch (error) {
+            setFtpStatus(`Upload webu selhal: ${error.message}`, true);
+        }
+    });
+
+    document.querySelectorAll('#ftpDeployModal [data-config-file]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const fileName = btn.getAttribute('data-config-file');
+            const action = btn.getAttribute('data-action');
+            if (!fileName || !action) return;
+
+            const payload = getFtpPayload();
+            payload.FileName = fileName;
+
+            if (action === 'save') {
+                const content = fileName === 'appsettings.json'
+                    ? document.getElementById('configAppSettings')?.value || ''
+                    : document.getElementById('configWebConfig')?.value || '';
+                payload.Content = content;
+            }
+
+            setFtpStatus(action === 'save' ? 'Ukládám soubor...' : 'Naèítám soubor...');
+
+            try {
+                const response = await fetch(`?handler=${action === 'save' ? 'FtpWriteConfig' : 'FtpReadConfig'}`, {
+                    method: 'POST',
+                    body: toFormData(payload)
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    setFtpStatus(result.message || 'Operace selhala.', true);
+                    return;
+                }
+
+                if (action === 'load') {
+                    if (fileName === 'appsettings.json') {
+                        document.getElementById('configAppSettings').value = result.content || '';
+                    } else {
+                        document.getElementById('configWebConfig').value = result.content || '';
+                    }
+                }
+
+                setFtpStatus(action === 'save' ? 'Soubor byl uložen.' : 'Soubor byl naèten.');
+            } catch (error) {
+                setFtpStatus(`Operace selhala: ${error.message}`, true);
+            }
+        });
+    });
+                        </script>
