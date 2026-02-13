@@ -1,6 +1,0 @@
-2026-02-13 06:49:58 | source=https://localhost:7177/Images/Foto_Avatar/blaston-1024x576.png | x0=224 | y0=0 | x1=800 | y1=576 | zoom=0.5208333333333334 | viewportW=300 | viewportH=300 | cropped=Images/Foto_Avatar/Cropped/dea3f1d9-cf94-4e14-88fc-43f4d50d60cc.png
-2026-02-13 06:55:04 | source=Images/Foto_Avatar/1000.jpg | x0=723 | y0=312 | x1=923 | y1=512 | zoom=1.5 | viewportW=300 | viewportH=300 | cropped=Images/Foto_Avatar/Cropped/48476511-8210-400d-a121-9128d1dc2c7b.png
-2026-02-13 07:02:00 | source=Images/Foto_Avatar/1000.jpg | x0=1 | y0=404 | x1=534 | y1=537 | zoom=1.5 | viewportW=800 | viewportH=200 | cropped=Images/Foto_Avatar/Cropped/a8eae2f4-8eba-47c0-96ac-cf656d46e06d.png
-2026-02-13 07:08:25 | source=https://localhost:7177/UzivatelskeSoubory/test/daniel.jpg | x0=746 | y0=231 | x1=1279 | y1=364 | zoom=1.5 | viewportW=800 | viewportH=200 | cropped=Images/Foto_Avatar/Cropped/9ceb8a3d-cc4a-4915-8226-f28576a937f0.png
-2026-02-13 07:12:22 | source=Images/Foto_Avatar/1000.jpg | x0=0 | y0=320 | x1=1536 | y1=704 | zoom=0.5208333333333334 | viewportW=800 | viewportH=200 | cropped=Images/Foto_Avatar/Cropped/2702f4e0-43a0-4cf7-9e6d-058c328f7279.png
-2026-02-13 07:12:30 | source=Images/Foto_Avatar/1000.jpg | x0=501 | y0=445 | x1=1035 | y1=579 | zoom=1.5 | viewportW=800 | viewportH=200 | cropped=Images/Foto_Avatar/Cropped/b8eea6b9-22dd-4dff-826b-36a5c7f9afb6.png

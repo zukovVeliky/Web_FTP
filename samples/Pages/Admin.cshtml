@@ -1,0 +1,20 @@
+﻿@page
+@model Samples.Pages.AdminModel
+@{
+    ViewData["Title"] = "Admin FTP Demo";
+}
+
+<div class="mb-4">
+    <h1 class="mb-3">Admin FTP Demo</h1>
+</div>
+
+<div class="mb-4">
+    <div class="fw-semibold mb-2">FTP nasazení a konfigurace</div>
+    <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#ftpDeployModal">
+            Otevřít správu
+        </button>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Areas/FTP/FTP_Update.cshtml", Model.fTP_Update)
